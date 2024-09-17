@@ -51,14 +51,14 @@ function formatWebhookData(data) {
     return formattedMessage;
   }
 
-// Route to handle incoming webhook data
-app.post('/trades', async (req, res) => {
+// Route to handle incoming webhook data from Josh
+app.post('/trades/josh', async (req, res) => {
     try {
       // Log incoming webhook data for debugging
       console.log('Webhook received:', req.body);
   
       // Retrieve the Discord channel
-      const channel = await discordClient.channels.fetch(process.env.DISCORD_CHANNEL_ID);
+      const channel = await discordClient.channels.fetch(process.env.JOSH_DISCORD_CHANNEL_ID);
   
       // Format the message using the formatting function
       const messageContent = formatWebhookData(req.body);
@@ -67,11 +67,40 @@ app.post('/trades', async (req, res) => {
       await channel.send(messageContent);
   
       // Respond to the client
-      res.status(200).send('Webhook data received and sent to Discord');
+    // Respond to the client with a JSON object
+        res.status(200).json({ status: 'success', message: 'Webhook data received and sent to Discord' });
     } catch (error) {
-      console.error('Error handling webhook:', error);
-      res.status(500).send('Error processing webhook');
-    }
+    console.error('Error handling webhook:', error);
+    res.status(500).json({ status: 'error', message: 'Error processing webhook', error: error.toString() });
+  }
+  });
+
+//Route to handle incoming webhook data from Noob
+app.post('/trades/noob', async (req, res) => {
+  try {
+    // Log incoming webhook data for debugging
+    console.log('Webhook received:', req.body);
+
+    // Retrieve the Discord channel
+    const channel = await discordClient.channels.fetch(process.env.DISCORD_CHANNEL_ID);
+
+    // Format the message using the formatting function
+    const messageContent = formatWebhookData(req.body);
+
+    // Send the formatted message to Discord
+    await channel.send(messageContent);
+
+    // Respond to the client
+  // Respond to the client with a JSON object
+      res.status(200).json({ status: 'success', message: 'Webhook data received and sent to Discord' });
+  } catch (error) {
+  console.error('Error handling webhook:', error);
+  res.status(500).json({ status: 'error', message: 'Error processing webhook', error: error.toString() });
+}
+});
+
+app.get('/health', (req, res) => {
+    res.status(200).send('OK');
   });
 
 // Start the server
@@ -80,3 +109,14 @@ app.listen(PORT, () => {
 });
 
 
+/* Add Health Checks
+You can add a health check in your docker-compose.yml to monitor the application's health:
+
+yaml
+Copy code
+healthcheck:
+  test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+  interval: 30s
+  timeout: 10s
+  retries: 3
+You'll need to implement a /health endpoint in your application for this to work. */
