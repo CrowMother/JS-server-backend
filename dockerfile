@@ -1,6 +1,9 @@
 # Use the official Node.js LTS version as the base image
 FROM node:18-alpine
 
+# Install curl
+RUN apk add --no-cache curl
+
 # Create and set the working directory inside the container
 WORKDIR /app
 

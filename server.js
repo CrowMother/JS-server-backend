@@ -82,7 +82,7 @@ app.post('/trades/noob', async (req, res) => {
     console.log('Webhook received:', req.body);
 
     // Retrieve the Discord channel
-    const channel = await discordClient.channels.fetch(process.env.DISCORD_CHANNEL_ID);
+    const channel = await discordClient.channels.fetch(process.env.NOOB_DISCORD_CHANNEL_ID);
 
     // Format the message using the formatting function
     const messageContent = formatWebhookData(req.body);
