@@ -19,7 +19,7 @@ discordClient.login(process.env.DISCORD_TOKEN);
 app.use(express.json());
 
 //function to format incoming data into a ledgable state
-function formatWebhookData(data) {
+function formatWebhookData(data, atEveyerone) {
     // Calculate Strike Price per unit
     const strikePricePerUnit = data.StrikePrice / data.Quantity / 100; // Assuming prices are in cents
   
@@ -43,8 +43,14 @@ function formatWebhookData(data) {
     };
     const positionText = positionCodeMap[data.OpenClosePositionCode] || data.OpenClosePositionCode;
   
+    if(atEveyerone){
+      everyone = "@everyone"
+    }
+    else{
+      everyone = ""
+    }
     // Assemble the message
-    const formattedMessage = `${data.UnderlyingSymbol} $${strikePricePerUnit.toFixed(2)} ${optionType} ${optionExpiryDate} @ $${executionPricePerUnit.toFixed(2)}: ${positionText} @everyone`;
+    const formattedMessage = `${data.UnderlyingSymbol} $${strikePricePerUnit.toFixed(2)} ${optionType} ${optionExpiryDate} @ $${executionPricePerUnit.toFixed(2)}: ${positionText} ${everyone}`;
   
     console.log('Formatted Message:', formattedMessage); // For debugging
   
@@ -61,7 +67,7 @@ app.post('/trades/josh', async (req, res) => {
       const channel = await discordClient.channels.fetch(process.env.JOSH_DISCORD_CHANNEL_ID);
   
       // Format the message using the formatting function
-      const messageContent = formatWebhookData(req.body);
+      const messageContent = formatWebhookData(req.body, true);
   
       // Send the formatted message to Discord
       await channel.send(messageContent);
@@ -85,7 +91,7 @@ app.post('/trades/noob', async (req, res) => {
     const channel = await discordClient.channels.fetch(process.env.NOOB_DISCORD_CHANNEL_ID);
 
     // Format the message using the formatting function
-    const messageContent = formatWebhookData(req.body);
+    const messageContent = formatWebhookData(req.body, false);
 
     // Send the formatted message to Discord
     await channel.send(messageContent);
