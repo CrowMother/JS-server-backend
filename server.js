@@ -20,11 +20,17 @@ app.use(express.json());
 
 //function to format incoming data into a ledgable state
 function formatWebhookData(data, atEveyerone) {
+    //calculate Sign Scale for further calculations
+    //look into this function for now it is set to a set value of scale 6
+    signScale = calculateSignScale()
+
+    
+
     // Calculate Strike Price per unit
-    const strikePricePerUnit = data.StrikePrice / data.Quantity / 100; // Assuming prices are in cents
+    const strikePricePerUnit = data.StrikePrice / signScale; 
   
     // Calculate Execution Price per unit
-    const executionPricePerUnit = data.ExecutionPrice / data.Quantity;
+    const executionPricePerUnit = data.ExecutionPrice / signScale;
   
     // Map OptionsQuote to "P" or "C"
     const optionsQuoteMap = {
@@ -69,8 +75,9 @@ app.post('/trades/josh', async (req, res) => {
       // Format the message using the formatting function
       const messageContent = formatWebhookData(req.body, true);
   
+//UNCOMMENT FOR PRODUCTION RUNS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       // Send the formatted message to Discord
-      await channel.send(messageContent);
+      //await channel.send(messageContent);
   
       // Respond to the client
     // Respond to the client with a JSON object
@@ -114,15 +121,6 @@ app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
 
-
-/* Add Health Checks
-You can add a health check in your docker-compose.yml to monitor the application's health:
-
-yaml
-Copy code
-healthcheck:
-  test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-  interval: 30s
-  timeout: 10s
-  retries: 3
-You'll need to implement a /health endpoint in your application for this to work. */
+function calculateSignScale(){
+  return (Math.pow(10, 6))
+}
