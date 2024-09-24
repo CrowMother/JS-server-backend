@@ -77,7 +77,7 @@ app.post('/trades/josh', async (req, res) => {
   
 //UNCOMMENT FOR PRODUCTION RUNS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       // Send the formatted message to Discord
-      //await channel.send(messageContent);
+      await channel.send(messageContent);
   
       // Respond to the client
     // Respond to the client with a JSON object
