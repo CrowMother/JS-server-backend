@@ -1,2 +1,2 @@
-docker build -no-cache -t crowmommy/tracker-backend . 
+docker build --no-cache -t crowmommy/tracker-backend . 
 docker push crowmommy/tracker-backend
