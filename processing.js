@@ -120,5 +120,5 @@ async function process_webhook_new(req, res, channelID, suffix) {
 };
 
   module.exports = {
-    formatWebhookData: format_webhook_data, process_webhook, process_webhook_new, format_webhook_data_new
+    formatWebhookData: process_webhook_new, format_webhook_data_new
 };
