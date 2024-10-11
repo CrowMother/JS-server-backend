@@ -4,7 +4,7 @@ const express = require('express');
 require('dotenv').config();
 
 
-const {process_webhook, process_webhook_new } = require('./processing');
+const {process_webhook } = require('./processing');
 
 // Set up Express app
 const app = express();
@@ -19,12 +19,12 @@ app.use(express.json());
 
 // Route to handle incoming webhook data from Josh
 app.post('/trades/josh', async (req, res) => {
-    process_webhook_new(req, res, process.env.JOSH_DISCORD_CHANNEL_ID, "@everyone")
-  });
+  process_webhook(req, res, process.env.JOSH_DISCORD_CHANNEL_ID, "@everyone")
+});
 
 //Route to handle incoming webhook data from Noob
 app.post('/trades/noob', async (req, res) => {
-  process_webhook_new(req, res, process.env.NOOD_DISCORD_CHANNEL_ID, "")
+  process_webhook(req, res, process.env.NOOD_DISCORD_CHANNEL_ID, "")
 });
 
 app.get('/health', (req, res) => {
