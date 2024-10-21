@@ -41,7 +41,7 @@ async function process_webhook(req, res, channelID, suffix) {
     console.log(messageContent)
   //UNCOMMENT FOR PRODUCTION RUNS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // Send the formatted message to Discord
-    await channel.send(messageContent);
+    //await channel.send(messageContent);
 
     // Respond to the client with a JSON object
     res.status(200).json({ status: 'success', message: 'Webhook data received and sent to Discord' });
