@@ -13,7 +13,7 @@ discordClient.login(process.env.DISCORD_TOKEN);
 function format_webhook_data_new(data, suffix) {
 
 
-    const formattedMessage = `${data.message} ${suffix}`;
+    const formattedMessage = `${data.message} \n${suffix}`;
   
   
     return formattedMessage;
