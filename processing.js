@@ -11,9 +11,28 @@ discordClient.login(process.env.DISCORD_TOKEN);
 
 
 function format_webhook_data_new(data, suffix) {
+  const {
+    order_id,
+    underlying_symbol,
+    order_type,
+    status,
+    entered_time,
+    filled_quantity,
+    date,
+    strike,
+    price,
+    put_call,
+    instruction,
+    account_number,
+    gain_loss_percentage,
+  } = data;
 
 
-    const formattedMessage = `${data.message} \n${suffix}`;
+
+    console.log(date)
+    console.log(price)
+
+    const formattedMessage = `${underlying_symbol} ${put_call} ${date} @ $${price}: ${instruction}`;
   
   
     return formattedMessage;
