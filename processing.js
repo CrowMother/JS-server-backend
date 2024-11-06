@@ -1,5 +1,6 @@
 
 const { Client, GatewayIntentBits } = require('discord.js');
+require('dotenv').config();
 
 // Set up the Discord bot client
 const discordClient = new Client({
@@ -27,12 +28,13 @@ function format_webhook_data_new(data, suffix) {
     gain_loss_percentage,
   } = data;
 
-
+  //validate that gain loss percentage is not null and if it is then add it to the message as ''
+  const gain_loss_string = gain_loss_percentage !== null ? ` ${gain_loss_percentage}%` : '';
 
     console.log(date)
     console.log(price)
 
-    const formattedMessage = `${underlying_symbol} ${put_call} ${date} @ $${price}: ${instruction}`;
+    const formattedMessage = `${underlying_symbol} $${strike} ${put_call} ${date} @ $${price}: ${instruction}${gain_loss_string} ${suffix}`;
   
   
     return formattedMessage;
@@ -60,7 +62,9 @@ async function process_webhook(req, res, channelID, suffix) {
     console.log(messageContent)
   //UNCOMMENT FOR PRODUCTION RUNS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // Send the formatted message to Discord
-    //await channel.send(messageContent);
+    if (process.env.SEND_TO_DISCORD > 0){
+    await channel.send(messageContent);
+    }
 
     // Respond to the client with a JSON object
     res.status(200).json({ status: 'success', message: 'Webhook data received and sent to Discord' });
