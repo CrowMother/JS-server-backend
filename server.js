@@ -31,7 +31,7 @@ app.post('/trades/noob', async (req, res) => {
 
 app.post('/trades/UObot', async (req, res) => {
   
-  process_webhook_unusual_options(req, res, process.env.UOBOT_DISCORD_CHANNEL_ID, "@ here")
+  process_webhook_unusual_options(req, res, process.env.UOBOT_DISCORD_CHANNEL_ID, "")
 });
 
 app.get('/health', (req, res) => {
