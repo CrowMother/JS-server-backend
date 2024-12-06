@@ -32,7 +32,11 @@ function format_webhook_data_new(data, suffix) {
   //validate that gain loss percentage is not null and if it is then add it to the message as ''
   const gain_loss_string = gain_loss_percentage !== null ? ` ${gain_loss_percentage}%` : '';
 
-    const formattedMessage = `${underlying_symbol} $${strike} ${put_call} ${date} @ $${price}: ${instruction}  ${gain_loss_string} \n ${quantity_string} ${suffix}`;
+  //validate that if the quantity null or undefined then add it to the message as ''
+  console.log(quantity_string)
+
+    const formattedMessage = (`${underlying_symbol} $${strike} ${put_call} ${date} @ $${price}: ${instruction} ${gain_loss_string}
+      \n${quantity_string}${suffix}`);
   
   
     return formattedMessage;
