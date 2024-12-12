@@ -76,78 +76,88 @@ async function process_webhook_tracker(req, res, channelID, suffix) {
   }
 };
 
+function format_date(symbol) {
+  const match = symbol.match(/\d{6}/);
+  if (match) {
+    const year = match[0].slice(0, 2);
+    const month = match[0].slice(2, 4);
+    const day = match[0].slice(4, 6);
+    return `${month}/${day}/${year}`
+  }
+}
 
+function format_call_put(symbol) {
+  const match = symbol.match(/[CP]/);
+  console.log(match)
+  if (match) {
+    if (match[0] === 'C') {
+      return 'C'
+    } 
+    else if (match[0] === 'P') {
+      return 'P'
+    }
+    else {
+      return match
+    }
+  }
+}
+
+function format_strike_price(symbol) {
+  // Match the numeric digits immediately after 'C' or 'P'
+  const match = symbol.match(/[CP](\d+)/);
+
+  if (match && match[1]) {
+    // Divide by 1000 and format to 2 decimal places
+    return (parseInt(match[1], 10) / 1000).toFixed(2);
+  } else {
+    throw new Error("Invalid options contract format: C or P not found");
+  }
+}
 
 function format_webhook_data_bot(data, suffix) {
   const {
-    conditions,
-    exchange,
-    id,
     price,
-    sequence_number,
-    sip_timestamp,
     size,
+    timestamp,
     symbol,
-    plain_symbol,
-    expirationDate,
     openInterest,
-    callPut,
-    strike
+    fullSymbol
   } = data;
 
-  //format total price to dollars
-  totalPrice = (price * 100) * size;
-  //format total price to dollars with commas
-  totalPrice = totalPrice.toLocaleString('en-US');
-  
-  expirationDatestr = formatDate(expirationDate)
-  first_part = symbol.slice(0, 1);
-  //from the fist part find the end of the symbol within the string
-  
-  messageContent = `${plain_symbol} $${strike} ${callPut} ${expirationDatestr}\nPrice: $${price} Sizing: ${size} Open interest: ${openInterest}\nTotal Price: $${totalPrice} \n${suffix}` 
+  function format_total_price(price, size) {
+    //add commas to the price
+    total = (price * size) * 100
+    const formattedPrice = total.toLocaleString('en-US');
+    return `${formattedPrice}`
+  }
 
+  // message = (`${size} contracts of ${symbol} $${format_strike_price(fullSymbol)}${format_call_put(fullSymbol)} ${format_date(fullSymbol)}  @ $${price}\nover\n${openInterest} open interest : Totaling $${format_total_price(price, size)} ${suffix}`);
+  message = (`### ${symbol} $${format_strike_price(fullSymbol)}${format_call_put(fullSymbol)} ${format_date(fullSymbol)} @ $${price} \n${size} contracts Totaling: $${format_total_price(price, size)}\nOpen Interest: ${openInterest}${suffix}`);
 
-  return messageContent;
-}
-
-function formatDate(date) {
-  //2024-12-27T21:00:00.000+00:00
-  //convert above to 12/27/2024
-
-  const dateObj = new Date(date);
-  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-  const day = String(dateObj.getDate()).padStart(2, '0');
-  const year = String(dateObj.getFullYear());
-
-  return `${month}/${day}/${year}`
+  console.log(message)
+  return message
 }
 
 async function process_webhook_unusual_options(req, res, channelID, suffix) {
   try {
-    // Log incoming webhook data for debugging
     console.log('Webhook received:', req.body);
-
-    //console.log('Discord Token:', process.env.DISCORD_TOKEN);
-    // Retrieve the Discord channel
+    //process into discord message
     const channel = await discordClient.channels.fetch(channelID);
 
-    // Format the message using the formatting function, true stands for @everyone or not
-    messageContent = format_webhook_data_bot(req.body, suffix);
-    console.log(messageContent)
-  //UNCOMMENT FOR PRODUCTION RUNS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    message = format_webhook_data_bot(req.body, suffix);
+    //UNCOMMENT FOR PRODUCTION RUNS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // Send the formatted message to Discord
     if (process.env.SEND_TO_DISCORD > 0){
-      
-      await channel.send(messageContent);
+    await channel.send(message);
     }
 
-    // Respond to the client with a JSON object
-    res.status(200).json({ status: 'success', message: 'Webhook data received and sent to Discord' });
+
+    res.status(200).json({ status: 'success', message: 'Webhook data received' });
   } catch (error) {
     console.error('Error handling webhook:', error);
     res.status(500).json({ status: 'error', message: 'Error processing webhook', error: error.toString() });
   }
-};
+}
 
 
   module.exports = {
