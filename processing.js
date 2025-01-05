@@ -36,7 +36,7 @@ function format_webhook_data_new(data, suffix) {
   console.log(quantity_string)
 
     const formattedMessage = (`${underlying_symbol} $${strike} ${put_call} ${date} @ $${price}: ${instruction} ${gain_loss_string}
-      \n${quantity_string}${suffix}`);
+    ${suffix}`);
   
   
     return formattedMessage;
