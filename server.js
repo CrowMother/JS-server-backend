@@ -18,15 +18,15 @@ app.use(express.json());
 
 
 // Route to handle incoming webhook data from Josh
-app.post('/trades/josh', async (req, res) => {
+app.post('/trades/live_tracker', async (req, res) => {
   
-  process_webhook(req, res, process.env.JOSH_DISCORD_CHANNEL_ID, "@everyone")
+  process_webhook(req, res)
 });
 
 //Route to handle incoming webhook data from Noob
 app.post('/trades/noob', async (req, res) => {
   
-  process_webhook(req, res, process.env.NOOD_DISCORD_CHANNEL_ID, "")
+  process_webhook(req, res)
 });
 
 app.post('/trades/UObot', async (req, res) => {
