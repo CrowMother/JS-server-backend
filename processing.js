@@ -50,23 +50,21 @@ function format_webhook_data_new(data, suffix) {
  * @param {string} channelID The ID of the Discord channel to send the message to.
  * @param {string} suffix The suffix to add to the message before sending it to Discord.
  */
-async function process_webhook_tracker(req, res, channelID, suffix) {
+async function process_webhook_tracker(req, res) {
   try {
     // Log incoming webhook data for debugging
     console.log('Webhook received:', req.body);
 
-    //console.log('Discord Token:', process.env.DISCORD_TOKEN);
-    // Retrieve the Discord channel
+    //process message into discord channel id, message content from the request body
+    channelID = req.body.channel;
+    console.log(channelID)
+    message = req.body.content;
     const channel = await discordClient.channels.fetch(channelID);
 
-    // Format the message using the formatting function, true stands for @everyone or not
-    const messageContent = format_webhook_data_new(req.body, suffix);
-    console.log(messageContent)
-  //UNCOMMENT FOR PRODUCTION RUNS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    //UNCOMMENT FOR PRODUCTION RUNS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // Send the formatted message to Discord
-    if (process.env.SEND_TO_DISCORD > 0){
-    await channel.send(messageContent);
-    }
+    await channel.send(message);
+
 
     // Respond to the client with a JSON object
     res.status(200).json({ status: 'success', message: 'Webhook data received and sent to Discord' });
