@@ -18,7 +18,7 @@ app.use(express.json());
 
 
 // Route to handle incoming webhook data from Josh
-app.post('/trades/live_tracker', async (req, res) => {
+app.post('/discord', async (req, res) => {
   
   process_webhook(req, res)
 });
