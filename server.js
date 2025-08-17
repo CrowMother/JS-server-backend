@@ -19,7 +19,7 @@ app.use(express.json());
 
 // Route to handle incoming webhook data from Josh
 app.post('/trades/live_tracker', async (req, res) => {
-  
+  console.log("fuxk off")
   process_webhook(req, res)
 });
 

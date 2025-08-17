@@ -63,7 +63,13 @@ async function process_webhook_tracker(req, res) {
 
     //UNCOMMENT FOR PRODUCTION RUNS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // Send the formatted message to Discord
-    await channel.send(message);
+
+    const roleId = req.body.role; // your role ID
+    console.log(`role id ${req.body.role}`)
+    await channel.send({
+      content: `${message}\n<@&${roleId}> `,
+      allowedMentions: { roles: [roleId] } // explicitly allow pinging that role
+    });
 
 
     // Respond to the client with a JSON object
@@ -112,7 +118,7 @@ function format_strike_price(symbol) {
   }
 }
 
-function format_webhook_data_bot(data, suffix) {
+function format_webhook_data_bot(data) {
   const {
     price,
     size,
@@ -130,7 +136,7 @@ function format_webhook_data_bot(data, suffix) {
   }
 
   // message = (`${size} contracts of ${symbol} $${format_strike_price(fullSymbol)}${format_call_put(fullSymbol)} ${format_date(fullSymbol)}  @ $${price}\nover\n${openInterest} open interest : Totaling $${format_total_price(price, size)} ${suffix}`);
-  message = (`### ${symbol} $${format_strike_price(fullSymbol)}${format_call_put(fullSymbol)} ${format_date(fullSymbol)} @ $${price} \n${size} contracts Totaling: $${format_total_price(price, size)}\nOpen Interest: ${openInterest}${suffix}`);
+  message = (`### ${symbol} $${format_strike_price(fullSymbol)}${format_call_put(fullSymbol)} ${format_date(fullSymbol)} @ $${price} \n${size} contracts Totaling: $${format_total_price(price, size)}\nOpen Interest: ${openInterest}`);
 
   console.log(message)
   return message
@@ -146,7 +152,10 @@ async function process_webhook_unusual_options(req, res, channelID, suffix) {
     //UNCOMMENT FOR PRODUCTION RUNS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     // Send the formatted message to Discord
     if (process.env.SEND_TO_DISCORD > 0){
-    await channel.send(message);
+    await channel.send({
+      content: `<@&${suffix}> Hello role!`,
+      allowedMentions: {roles: [suffix]}
+    });
     }
 
 
