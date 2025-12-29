@@ -59,26 +59,31 @@ async function process_webhook_tracker(req, res) {
     channelID = req.body.channel;
     console.log(channelID)
     message = req.body.content;
-    const channel = await discordClient.channels.fetch(channelID);
+    if (message == null){
+      console.log("Message not sending")
+      return
+    }
+    else{const channel = await discordClient.channels.fetch(channelID);
 
-    //UNCOMMENT FOR PRODUCTION RUNS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    // Send the formatted message to Discord
+      //UNCOMMENT FOR PRODUCTION RUNS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      // Send the formatted message to Discord
 
-    const roleId = req.body.role; // your role ID
-    console.log(`role id ${req.body.role}`)
-    await channel.send({
-      content: `${message}\n<@&${roleId}> `,
-      allowedMentions: { roles: [roleId] } // explicitly allow pinging that role
-    });
+      const roleId = req.body.role; // your role ID
+      console.log(`role id ${req.body.role}`)
+      await channel.send({
+        content: `${message}\n<@&${roleId}> `,
+        allowedMentions: { roles: [roleId] } // explicitly allow pinging that role
+      });
 
 
-    // Respond to the client with a JSON object
-    res.status(200).json({ status: 'success', message: 'Webhook data received and sent to Discord' });
-  } catch (error) {
-    console.error('Error handling webhook:', error);
-    res.status(500).json({ status: 'error', message: 'Error processing webhook', error: error.toString() });
-  }
-};
+      // Respond to the client with a JSON object
+      res.status(200).json({ status: 'success', message: 'Webhook data received and sent to Discord' });}
+      
+    } catch (error) {
+      console.error('Error handling webhook:', error);
+      res.status(500).json({ status: 'error', message: 'Error processing webhook', error: error.toString() });
+    }
+  };
 
 function format_date(symbol) {
   const match = symbol.match(/\d{6}/);
